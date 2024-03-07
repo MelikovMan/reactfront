@@ -2,7 +2,7 @@ import axios from "axios";
 export const URL = "localhost"
 export const PORT = "8081"
 export const REFRESH_ENDPOINT='auth/update_access_token';
-export const LOGIN_ENDPOINT='auth/login';
+export const LOGIN_ENDPOINT='auth/auth';
 export const LOGOUT_ENDPOINT='auth/logout';
 export const instance = axios.create({
   withCredentials: true,
