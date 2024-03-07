@@ -31,6 +31,10 @@ const Routes = () => {
         path: "/about-us",
         element: <div>About Us</div>,
       },
+      {
+        path: "/auth/login",
+        element: <div>No pass!!</div>,
+      },
     ];
   
     // Define routes accessible only to authenticated users

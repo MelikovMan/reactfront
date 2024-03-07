@@ -1,9 +1,9 @@
 import axios from "axios";
 export const URL = "localhost"
-export const PORT = "8080"
-export const REFRESH_ENDPOINT='update_access_token';
-export const LOGIN_ENDPOINT='login';
-export const LOGOUT_ENDPOINT='logout';
+export const PORT = "8081"
+export const REFRESH_ENDPOINT='auth/update_access_token';
+export const LOGIN_ENDPOINT='auth/login';
+export const LOGOUT_ENDPOINT='auth/logout';
 export const instance = axios.create({
   withCredentials: true,
   baseURL: `http://${URL}:${PORT}/`,
