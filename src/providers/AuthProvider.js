@@ -16,10 +16,15 @@ const AuthProvider = ({ children }) => {
     const login = useCallback(async (login, password) =>{
         let success = false;
         try {
-            setAuthProgress(true)
-            const resp = await AuthService.login(login,password);
-            localStorage.setItem("token", resp.data.accessToken);
-            setToken(resp.data.accessToken);
+            setAuthProgress(true);
+            const json = await JSON.stringify({
+              email:login,
+              password:password
+            })
+            const resp = await AuthService.login(json);
+            const parsed = await JSON.parse(resp.data);
+            localStorage.setItem("token", parsed.access_token_string);
+            setToken({...parsed});
             success=true;
       
            } catch (err) {

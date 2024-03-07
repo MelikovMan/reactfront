@@ -1,6 +1,6 @@
 import axios from "axios";
 export const URL = "localhost"
-export const PORT = "8090"
+export const PORT = "8080"
 export const REFRESH_ENDPOINT='update_access_token';
 export const LOGIN_ENDPOINT='login';
 export const LOGOUT_ENDPOINT='logout';
