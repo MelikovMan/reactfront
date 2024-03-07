@@ -3,8 +3,8 @@ import {instance, URL, PORT, REFRESH_ENDPOINT, LOGIN_ENDPOINT, LOGOUT_ENDPOINT} 
 
 const AuthService = {
 
-    login (email, password) {
-        return instance.post(LOGIN_ENDPOINT, {email, password})
+    login (body) {
+        return instance.post(LOGIN_ENDPOINT, body)
     },
     
     refreshToken() {
