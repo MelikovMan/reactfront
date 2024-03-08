@@ -1,6 +1,7 @@
-import { Typography, Alert, Button, LinearProgress, Stack } from "@mui/material";
+import { Typography, Alert, Button, LinearProgress, Stack, Snackbar, IconButton} from "@mui/material";
 import FormInputText from "../components/FormInputText";
 import FormInputDropdown from "../components/FormInputDropdown";
+import CloseIcon from '@mui/icons-material/Close';
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Box from "@mui/material/Box";
@@ -18,11 +19,44 @@ export default function AddUser(){
 
     const [err,setErr]=useState(false);
     const [inProgress,setInProgress]=useState(false);
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => {
+        setOpen(true);
+    };
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setOpen(false);
+    };
+    const action = (
+        <>
+          <Button color="secondary" size="small" onClick={handleClose}>
+            Отмена
+          </Button>
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={handleClose}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </>
+      );
+    
     const [info,submitFunc] = useOutletContext();
     const onSubmit = async (data)=>{
         setInProgress(true);
         const res = await handleSubmit(data);
         setInProgress(false);
+        if(res.data.status==="ok"){
+            handleOpen();
+        }
+        else{
+            setErr(true);
+        }
 
     }
     return(
@@ -134,6 +168,13 @@ export default function AddUser(){
       </Button>
       {inProgress && <LinearProgress color="secondary"/>}
       {err && <Alert severity="error">Ошибка добавления</Alert>}
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message="Новый пользователь добавлен"
+        action={action}
+      />
       </>
     )
 }
