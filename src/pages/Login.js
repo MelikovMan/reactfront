@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form"
 import { useAuth } from "../providers/AuthProvider";
-import { useNavigate } from "react-router";
+import { redirect } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import logo from '../logo.svg';
 import { Button, Paper, Typography, Alert, LinearProgress } from "@mui/material";
@@ -23,29 +23,14 @@ export default function Login() {
     });
     const {        token,
         authInProgress,
-        login,
-        fakelogin,
-        logout,fakelogout}= useAuth();
+        login,}= useAuth();
 
-        const navigate=useNavigate();
     const [err,setErr]=useState(false);
     const onSubmit = async (data) => {
         setErr(false);
         console.log(data)
         let res = await login(data.login,data.password);
         setErr(!res);
-    }
-    useEffect(
-      ()=>{
-        console.log(token);
-        if(token) navigate("/dashboard");
-      }, [{...token}]
-    )
-    const onfakeSubmit = async ({log,password}) => {
-        await fakelogin();
-        setErr(!!token);
-        if(token) navigate("/dashboard");
-
     }
     const defValues = useMemo(()=>{
       return {

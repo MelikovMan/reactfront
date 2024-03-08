@@ -31,7 +31,7 @@ instance.interceptors.request.use(
       ) {
         try {
           const resp = await instance.get(`${REFRESH_ENDPOINT}`);
-          localStorage.setItem("token", resp.data.accessToken);
+          localStorage.setItem("token", resp.data.data.access_token_string);
           return instance.request(originalRequest);
         } catch (error) {
           console.log("AUTH ERROR");

@@ -6,9 +6,8 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
     // State to hold the authentication token
     const [token, setToken_] = useState(localStorage.getItem("token"));
-
+    //const navigate = useNavigate();
     const [authInProgress, setAuthProgress] = useState(false)
-  
     // Function to set the authentication token
     const setToken = (newToken) => {
       setToken_(newToken);
@@ -22,7 +21,7 @@ const AuthProvider = ({ children }) => {
               password:password
             })
             const resp = await AuthService.login(json);
-            console.log(resp);
+            console.log(resp.data.data);
             const parsed = resp.data.data;
             localStorage.setItem("token", parsed.access_token_string);
             setToken({...parsed});
@@ -35,6 +34,19 @@ const AuthProvider = ({ children }) => {
             return success;
           } 
     });
+    const refresh = useCallback(async ()=>{
+      setAuthProgress(true);
+    try {
+      const resp = await AuthService.refreshToken();
+      localStorage.setItem("token", resp.data.data.access_token_string);
+      setToken(resp.data.data.access_token_string);
+
+     } catch (err) {
+      console.log(err);
+     } finally {
+      setAuthProgress(false);
+    } 
+    })
     const fakelogin = useCallback(async () =>{
       try {
           setAuthProgress(true)
@@ -82,8 +94,9 @@ const AuthProvider = ({ children }) => {
         fakelogin,
         logout,
         fakelogout,
+        refresh,
       }),
-      [token, authInProgress, login, fakelogin, logout, fakelogout]
+      [token, authInProgress, login, fakelogin, logout, fakelogout,refresh]
     );
   
     // Provide the authentication context to the children components

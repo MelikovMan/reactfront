@@ -1,10 +1,11 @@
-import { RouterProvider, createBrowserRouter, Link } from "react-router-dom";
+import { RouterProvider, createBrowserRouter, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../providers/AuthProvider";
 import { ProtectedRoute } from "./ProtectedRoute";
 import Login from "../pages/Login"
 import Main from "../pages/Main"
 import Dashboard from "../pages/Dashboard";
 import { Link as LinkUI } from "@mui/material";
+import { useEffect } from "react";
 export const publicLinks = [
   <LinkUI component={Link} underline="none" color="inherit" to={"/service"}>Сервис</LinkUI>,
   <LinkUI component={Link} underline="none" color="inherit" to={"/about-us"}>О нас</LinkUI>,
@@ -19,7 +20,10 @@ export const publicOnlyLinks = [
   <LinkUI component={Link} underline="none" color="inherit" to={"/login"}>Профиль</LinkUI>,
 ]
 const Routes = () => {
-    const { token } = useAuth();
+    const { token,refresh } = useAuth();
+    useEffect(()=>{
+      if(token) refresh();
+    }, [token])
   
     // Define public routes accessible to all users
     const routesForPublic = [

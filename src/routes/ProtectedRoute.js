@@ -2,8 +2,14 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../providers/AuthProvider";
 import { Backdrop } from "@mui/material";
 import { CircularProgress } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 export const ProtectedRoute = () => {
     const { token, authInProgress } = useAuth();
+    const navigate = useNavigate();
+    useEffect(()=>{
+      if(token) navigate("/dashboard");
+    },[token]);
   
     // Check if the user is authenticated
     if (authInProgress) {
