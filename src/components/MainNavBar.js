@@ -160,14 +160,22 @@ function ResponsiveAppBar() {
                 </MenuItem>
               ))}
                 <Divider/>
-                <MenuItem key="logout"
+                <MenuItem 
+                onClick={()=>{
+                  navigate("/admin");
+                }}>
+                  <Typography textAlign="center">Администрация</Typography>
+                </MenuItem>
+                <Divider/>
+                <MenuItem 
                 color={"error"} 
                 onClick={()=>{
                   fakelogout();
                   navigate("/");
                 }}>
-                  <Typography textAlign="center">Выход</Typography>
+                  <Typography color={"error"} textAlign="center">Выход</Typography>
                 </MenuItem>
+                
             </Menu>
           </Box>:<Button
           variant='contained'

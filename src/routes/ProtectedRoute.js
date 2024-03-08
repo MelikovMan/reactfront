@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../providers/AuthProvider";
 import { Backdrop } from "@mui/material";
 import { CircularProgress } from "@mui/material";
@@ -7,8 +7,9 @@ import { useEffect } from "react";
 export const ProtectedRoute = () => {
     const { token, authInProgress } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     useEffect(()=>{
-      if(token) navigate("/dashboard");
+     if(token && location.pathname === "/") navigate("/dashboard");
     },[token]);
   
     // Check if the user is authenticated

@@ -1,11 +1,14 @@
 import { RouterProvider, createBrowserRouter, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../providers/AuthProvider";
 import { ProtectedRoute } from "./ProtectedRoute";
-import Login from "../pages/Login"
+import Users from "../pages/Users"
 import Main from "../pages/Main"
 import Dashboard from "../pages/Dashboard";
+import LoginRedirectRoute from "./LoginRedirectRoute";
 import { Link as LinkUI } from "@mui/material";
 import { useEffect } from "react";
+import Admin from "../pages/Admin";
+import AddUser from "../pages/AddUser";
 export const publicLinks = [
   <LinkUI component={Link} underline="none" color="inherit" to={"/service"}>Сервис</LinkUI>,
   <LinkUI component={Link} underline="none" color="inherit" to={"/about-us"}>О нас</LinkUI>,
@@ -36,8 +39,8 @@ const Routes = () => {
         element: <div>About Us</div>,
       },
       {
-        path: "/auth/login",
-        element: <div>No pass!!</div>,
+        path: "/login",
+        element: <LoginRedirectRoute/>,
       },
     ];
   
@@ -73,6 +76,23 @@ const Routes = () => {
             path: "/logout",
             element: <div>Logout</div>,
           },
+          {
+            path: "/admin",
+            element: <Admin/>,
+            children: [
+              {
+                path: "users",
+                element: <Users/>,
+                children: [
+                  {
+                    path: "add",
+                    element: <AddUser/>,
+                  },
+                ]
+              },
+            ]
+          },
+          
         ],
       },
     ];
@@ -82,10 +102,6 @@ const Routes = () => {
       {
         path: "/",
         element: <Main/>,
-      },
-      {
-        path: "/login",
-        element: <Login/>,
       },
     ];
   

@@ -6,7 +6,6 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
     // State to hold the authentication token
     const [token, setToken_] = useState(localStorage.getItem("token"));
-    //const navigate = useNavigate();
     const [authInProgress, setAuthProgress] = useState(false)
     // Function to set the authentication token
     const setToken = (newToken) => {
@@ -19,7 +18,7 @@ const AuthProvider = ({ children }) => {
             const json = await JSON.stringify({
               email:login,
               password:password
-            })
+            });
             const resp = await AuthService.login(json);
             console.log(resp.data.data);
             const parsed = resp.data.data;
@@ -46,19 +45,7 @@ const AuthProvider = ({ children }) => {
      } finally {
       setAuthProgress(false);
     } 
-    })
-    const fakelogin = useCallback(async () =>{
-      try {
-          setAuthProgress(true)
-          let test = "ass";
-          localStorage.setItem("token", test);
-          setToken(test);
-         } catch (err) {
-          console.log(err);
-         } finally {
-          setAuthProgress(false);
-        } 
-  });
+    });
     const logout = useCallback(async () =>{
         try {
             setAuthProgress(true)
@@ -72,16 +59,41 @@ const AuthProvider = ({ children }) => {
             setAuthProgress(false);
           } 
     });
-    const fakelogout = useCallback(async () =>{
+
+    const register = useCallback(async ({
+      first_name,
+      last_name,
+      middle_name,
+      login,
+      password,
+      passport,
+      inn,
+      snils,
+      birthday,
+      role
+    }) =>{
+      let resl = null;
       try {
-          setAuthProgress(true)
-          localStorage.removeItem("token");
-          setToken();
+          const json = await JSON.stringify({
+            first_name:first_name,
+            last_name:last_name,
+            middle_name:middle_name,
+            login:login,
+            password:password,
+            passport:passport,
+            inn:inn,
+            snils:snils,
+            birthday:birthday,
+            role:role,
+          });
+          const resp = await AuthService.register(json);
+          resl=resp;
     
          } catch (err) {
-          console.log("logout error");
+          resl=err;
          } finally {
-          setAuthProgress(false);
+          console.log(resl);
+          return resl;
         } 
   });
   
@@ -91,12 +103,11 @@ const AuthProvider = ({ children }) => {
         token,
         authInProgress,
         login,
-        fakelogin,
         logout,
-        fakelogout,
         refresh,
+        register,
       }),
-      [token, authInProgress, login, fakelogin, logout, fakelogout,refresh]
+      [token, authInProgress, login,logout,refresh,register]
     );
   
     // Provide the authentication context to the children components

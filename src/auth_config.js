@@ -4,7 +4,7 @@ export const PORT = "8081"
 export const REFRESH_ENDPOINT='auth/update_access_token';
 export const LOGIN_ENDPOINT='auth/auth';
 export const LOGOUT_ENDPOINT='auth/logout';
-export const TEST_ENDPOINT='auth/test';
+export const REGISTER_ENDPOINT='auth/register';
 export const instance = axios.create({
   withCredentials: true,
   baseURL: `http://${URL}:${PORT}/`,

@@ -1,6 +1,4 @@
-import InventoryIcon from '@mui/icons-material/Inventory';
-import StorageIcon from '@mui/icons-material/Storage';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import PeopleIcon from '@mui/icons-material/People';
 import { Typography } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import Container from '@mui/material/Container';
@@ -14,7 +12,7 @@ const boxSX = {
     transition: "border-bottom 200ms",
     "transition-timing-function": "ease-out",
     "&:hover": {
-        "border-bottom": "4px solid #1976d2",
+      "border-bottom": "4px solid #1976d2",
     },
   };
 
@@ -33,22 +31,10 @@ export default function DashboardIcons(){
     alignItems={"center"}
     divider={<Divider orientation="vertical" flexItem />}
     spacing={2}>
-      <Box onClick={()=>{navigate("/dashboard/wares")}} sx={{...boxSX, width:`${100/ELEMS}vw`}}>
+      <Box onClick={()=>{navigate("users")}} sx={{...boxSX, width:`${100/ELEMS}vw`}}>
         <Stack alignItems={"center"}>
-        <InventoryIcon sx={imageSX}/>
-        <Typography>Товары</Typography>
-        </Stack>
-      </Box>
-      <Box onClick={()=>{navigate("/dashboard/storage")}} sx={{...boxSX, width:`${100/ELEMS}vw`}}>
-        <Stack alignItems={"center"}>
-        <StorageIcon sx={imageSX}/>
-        <Typography>Склад</Typography>
-        </Stack>
-      </Box>
-      <Box onClick={()=>{navigate("/dashboard/orders")}} sx={{...boxSX, width:`${100/ELEMS}vw`}}>
-        <Stack alignItems={"center"}>
-        <LocalShippingIcon sx={imageSX}/>
-        <Typography>Заказы</Typography>
+        <PeopleIcon sx={imageSX}/>
+        <Typography>Список пользователей</Typography>
         </Stack>
       </Box>
     </Stack>

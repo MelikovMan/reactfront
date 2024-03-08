@@ -1,4 +1,4 @@
-import {instance, URL, PORT, REFRESH_ENDPOINT, LOGIN_ENDPOINT, LOGOUT_ENDPOINT, TEST_ENDPOINT} from './auth_config';
+import {instance, URL, PORT, REFRESH_ENDPOINT, LOGIN_ENDPOINT, LOGOUT_ENDPOINT, REGISTER_ENDPOINT} from './auth_config';
 
 
 const AuthService = {
@@ -14,8 +14,8 @@ const AuthService = {
     logout() {
         return instance.post(LOGOUT_ENDPOINT)
     },
-    test() {
-        return instance.get(TEST_ENDPOINT)
+    register(body) {
+        return instance.post(REGISTER_ENDPOINT,body)
     },
 }
 
