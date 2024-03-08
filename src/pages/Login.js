@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form"
 import { useAuth } from "../providers/AuthProvider";
 import { useNavigate } from "react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import logo from '../logo.svg';
 import { Button, Paper, Typography, Alert, LinearProgress } from "@mui/material";
 import FormInputText from "../components/FormInputText";
@@ -29,17 +29,18 @@ export default function Login() {
 
         const navigate=useNavigate();
     const [err,setErr]=useState(false);
-    const onSubmit = async ({log,password}) => {
+    const onSubmit = async (data) => {
         setErr(false);
-        let res = await login(log,password);
+        console.log(data)
+        let res = await login(data.login,data.password);
         setErr(!res);
-        if(res) {
-          navigate("/dashboard");
-          //localStorage.removeItem("login");
-          //localStorage.removeItem("password");
-        }
-
     }
+    useEffect(
+      ()=>{
+        console.log(token);
+        if(token) navigate("/dashboard");
+      }, [{...token}]
+    )
     const onfakeSubmit = async ({log,password}) => {
         await fakelogin();
         setErr(!!token);

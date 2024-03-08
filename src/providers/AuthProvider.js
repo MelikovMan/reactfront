@@ -22,7 +22,8 @@ const AuthProvider = ({ children }) => {
               password:password
             })
             const resp = await AuthService.login(json);
-            const parsed = await JSON.parse(resp.data);
+            console.log(resp);
+            const parsed = resp.data.data;
             localStorage.setItem("token", parsed.access_token_string);
             setToken({...parsed});
             success=true;
