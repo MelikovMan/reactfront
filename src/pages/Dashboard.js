@@ -1,12 +1,20 @@
 import { useAuth } from "../providers/AuthProvider";
+import DashboardIcons from "../components/DashboardIcons";
+import MainNavBar from "../components/MainNavBar"
+import { Outlet } from "react-router";
+import { Container } from "@mui/material";
 export default function Dashboard(){
     const {        token,
         authInProgress,
         login,
-        logout}= useAuth();
+        logout, fakelogout}= useAuth();
     return(
-        <div>
-            <button onClick={()=>logout()}>Logout</button>
-        </div>
+        <>
+        <MainNavBar/>
+        <Container maxWidth="lg" sx={{my:'10px'}}>
+          <DashboardIcons/>
+          <Outlet/>
+        </Container>
+        </>
     )
 }

@@ -38,13 +38,8 @@ const AuthProvider = ({ children }) => {
       try {
           setAuthProgress(true)
           let test = "ass";
-          const resp = await async function (){
-            setTimeout(()=>{
-              localStorage.setItem("token", test);
-              setToken(resp.data.accessToken);
-            },3000);
-
-          } 
+          localStorage.setItem("token", test);
+          setToken(test);
          } catch (err) {
           console.log(err);
          } finally {

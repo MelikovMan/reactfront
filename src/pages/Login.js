@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import logo from '../logo.svg';
 import { Button, Paper, Typography, Alert, LinearProgress } from "@mui/material";
 import FormInputText from "../components/FormInputText";
+import AuthService from '../Auth.js'
 
 export default function Login() {
     const {
@@ -30,9 +31,13 @@ export default function Login() {
     const [err,setErr]=useState(false);
     const onSubmit = async ({log,password}) => {
         setErr(false);
-        let err = await login(log,password);
-        setErr(!err);
-        if(err) navigate("/dashboard");
+        let res = await login(log,password);
+        setErr(!res);
+        if(res) {
+          navigate("/dashboard");
+          //localStorage.removeItem("login");
+          //localStorage.removeItem("password");
+        }
 
     }
     const onfakeSubmit = async ({log,password}) => {
@@ -76,6 +81,11 @@ export default function Login() {
         {errors.password && <Alert severity="error">Поле обязательно!</Alert>}
         <Button onClick={handleSubmit(onSubmit)} variant={"contained"} disabled={authInProgress}>
           Войти в систему
+        </Button>
+        <Button onClick={async ()=>{
+          const res = await fetch("http://172.19.0.2:8080/test");
+          console.log(res);}} variant={"contained"} disabled={authInProgress}>
+          Тест
         </Button>
         {authInProgress && <LinearProgress />}
       </Paper>

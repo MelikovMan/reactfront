@@ -14,15 +14,17 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { publicLinks,privateLinks,publicOnlyLinks } from '../routes';
 import { useAuth } from '../providers/AuthProvider';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Link as LinkUI } from '@mui/material';
+import Divider from '@mui/material/Divider';
 
 
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const {token} = useAuth();
+  const {token,fakelogout} = useAuth();
+  const navigate = useNavigate();
   const pages = publicLinks;
   const settings = token ? privateLinks : publicOnlyLinks;
   const handleOpenNavMenu = (event) => {
@@ -93,7 +95,7 @@ function ResponsiveAppBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem key={page.props.to} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
@@ -121,7 +123,7 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
-                key={page}
+                key={page.props.to}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
@@ -153,10 +155,19 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting.props.to} onClick={handleCloseUserMenu}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
+                <Divider/>
+                <MenuItem key="logout"
+                color={"error"} 
+                onClick={()=>{
+                  fakelogout();
+                  navigate("/");
+                }}>
+                  <Typography textAlign="center">Выход</Typography>
+                </MenuItem>
             </Menu>
           </Box>:<Button
           variant='contained'

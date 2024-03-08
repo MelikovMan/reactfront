@@ -12,7 +12,7 @@ export const publicLinks = [
 export const privateLinks = [
   <LinkUI component={Link} underline="none" color="inherit" to={"/dashboard"}>Главная страница сервиса</LinkUI>,
   <LinkUI component={Link} underline="none" color="inherit" to={"/profile"}>Профиль</LinkUI>,
-  <LinkUI component={Link} underline="none" color="inherit" to={"/logout"}>Выход</LinkUI>,
+  //<LinkUI component={Link} underline="none" color="inherit" to={"/logout"}>Выход</LinkUI>,
 ]
 export const publicOnlyLinks = [
   <LinkUI component={Link} underline="none" color="inherit" to={"/"}>Главная страница</LinkUI>,
@@ -46,6 +46,20 @@ const Routes = () => {
           {
             path: "/dashboard",
             element: <Dashboard/>,
+            children: [
+              {
+                path: "wares",
+                element: <div>Ware List</div>,
+              },
+              {
+                path: "storage",
+                element: <div>Storage Info</div>,
+              },
+              {
+                path: "orders",
+                element: <div>Order List</div>,
+              },
+            ]
           },
           {
             path: "/profile",

@@ -1,11 +1,18 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../providers/AuthProvider";
+import { Backdrop } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 export const ProtectedRoute = () => {
     const { token, authInProgress } = useAuth();
   
     // Check if the user is authenticated
     if (authInProgress) {
-        return <div>Checking auth...</div>;
+        return (
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>);
       }
     if (!token) {
       // If not authenticated, redirect to the login page
