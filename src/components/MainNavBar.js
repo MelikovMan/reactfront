@@ -23,7 +23,7 @@ import Divider from '@mui/material/Divider';
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const {token,fakelogout} = useAuth();
+  const {token,logout} = useAuth();
   const navigate = useNavigate();
   const pages = publicLinks;
   const settings = token ? privateLinks : publicOnlyLinks;
@@ -162,7 +162,7 @@ function ResponsiveAppBar() {
                 <Divider/>
                 <MenuItem 
                 onClick={()=>{
-                  navigate("/admin");
+                  navigate("/dashboardAdmin");
                 }}>
                   <Typography textAlign="center">Администрация</Typography>
                 </MenuItem>
@@ -170,7 +170,7 @@ function ResponsiveAppBar() {
                 <MenuItem 
                 color={"error"} 
                 onClick={()=>{
-                  fakelogout();
+                  logout();
                   navigate("/");
                 }}>
                   <Typography color={"error"} textAlign="center">Выход</Typography>

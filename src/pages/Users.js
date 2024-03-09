@@ -29,6 +29,7 @@ import { useAuth } from '../providers/AuthProvider';
 import { useAdmin } from '../providers/AdminProvider';
 import { useQuery } from '@tanstack/react-query';
 import Skeleton from '@mui/material/Skeleton';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 
 function createData(id, name, calories, fat, carbs, protein) {
   return {
@@ -89,6 +90,12 @@ const headCells = [
     label: 'Имя',
   },
   {
+    id: 'middle_name',
+    numeric: false,
+    disablePadding: false,
+    label: 'Отчество',
+  },
+  {
     id: 'last_name',
     numeric: false,
     disablePadding: false,
@@ -105,6 +112,12 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: 'Паспорт',
+  },
+  {
+    id: 'role',
+    numeric: false,
+    disablePadding: false,
+    label: 'Роль',
   },
 ];
 
@@ -165,12 +178,16 @@ EnhancedTableHead.propTypes = {
 };
 
 function EnhancedTableToolbar(props) {
-  const { numSelected } = props;
+  const { numSelected, selected, selectedItem} = props;
   const [open, setOpen] = React.useState(false);
   const {add} = useAdmin();
   const navigate = useNavigate();
   const handleOpen = () => {
     navigate("add");
+    setOpen(true);
+  }
+  const handleOpenDelete = () => {
+    navigate("delete");
     setOpen(true);
   }
   const handleClose = () => {
@@ -209,7 +226,7 @@ function EnhancedTableToolbar(props) {
           variant="subtitle1"
           component="div"
         >
-          {numSelected} selected
+          {numSelected} выбрано
         </Typography>
       ) : (
         <Typography
@@ -218,29 +235,39 @@ function EnhancedTableToolbar(props) {
           id="tableTitle"
           component="div"
         >
-          Nutrition
+          Пользователи
         </Typography>
       )}
 
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
+      {numSelected === 1 ? (
+        <>
+        <Tooltip title="Удалить">
+          <IconButton onClick={handleOpenDelete}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
+        <Tooltip title="Изменить">
+          <IconButton onClick={handleOpen}>
+            <ModeEditIcon />
+          </IconButton>
+        </Tooltip>
+        </>
       ) : (
         <>
-          <Tooltip title="Add user">
+          <Tooltip title="Добавить">
           <IconButton onClick={handleOpen}>
             <AddIcon />
           </IconButton>
           </Tooltip>
-          <Tooltip title="Filter list">
+          <Tooltip title="Фильтровать">
             <IconButton>
               <FilterListIcon />
             </IconButton>
           </Tooltip>
+          
         </>
+
+        
       )}
       <Modal
         open={open}
@@ -249,7 +276,7 @@ function EnhancedTableToolbar(props) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Outlet context={[{},async (body)=> await add(body)]}/>
+          <Outlet context={[selectedItem,handleClose]}/>
         </Box>
       </Modal>
     </Toolbar>
@@ -259,25 +286,30 @@ function EnhancedTableToolbar(props) {
 
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
+  selectedItem: PropTypes.object,
+  selected: PropTypes.array,
 };
 
 export default function EnhancedTable() {
   const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
+  const [orderBy, setOrderBy] = React.useState('id');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const {get} = useAdmin();
+  const [selectedItem, setSelectedItem] = React.useState(null);
   const userQuery = useQuery({
     queryKey: ["users"],
     queryFn: ()=>get(),
+    onSuccess: ()=>{
+      setDense(true);
+    }
   })
 
 
-  const rows = userQuery.data.users ?? [];
-  console.log(rows);
-
+  const rows = userQuery.data?.users ?? [];
+  console.log(userQuery.data?.users);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -310,6 +342,10 @@ export default function EnhancedTable() {
         selected.slice(selectedIndex + 1),
       );
     }
+    if (newSelected.length === 1){
+      setSelectedItem(rows.find((elem)=>elem.id===id));
+    }
+    else setSelectedItem(null);
     setSelected(newSelected);
   };
 
@@ -331,15 +367,21 @@ export default function EnhancedTable() {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
-  const visibleRows = React.useMemo(
+  /*const visibleRows = React.useMemo(
     () =>
       stableSort(rows, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage,
       ),
-    [order, orderBy, page, rowsPerPage],
-  );
+    [order, orderBy, page, rowsPerPage, ...rows],
+  );*/
+  const visibleRows = 
+  stableSort(rows, getComparator(order, orderBy)).slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage,
+      );
+
+
   if (userQuery.isLoading) return (
   <Box sx={{ width: '100%' }}>
     <Paper sx={{ width: '100%', mb: 2 }}>
@@ -360,7 +402,10 @@ export default function EnhancedTable() {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar 
+        numSelected={selected.length} 
+        selected={selected}
+        selectedItem={selectedItem} />
         <TableContainer>
           <Table
             sx={{ minWidth: 'xs' }}
@@ -404,14 +449,16 @@ export default function EnhancedTable() {
                       component="th"
                       id={labelId}
                       scope="row"
-                      padding="none"
+                      //padding="none"
                     >
                       {row.id}
                     </TableCell>
                     <TableCell align="right">{row.first_name}</TableCell>
+                    <TableCell align="right">{row.middle_name}</TableCell>
                     <TableCell align="right">{row.last_name}</TableCell>
                     <TableCell align="right">{row.snils}</TableCell>
                     <TableCell align="right">{row.passport}</TableCell>
+                    <TableCell align="right">{row.role}</TableCell>
                   </TableRow>
                 );
               })}

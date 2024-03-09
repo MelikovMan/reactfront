@@ -49,7 +49,7 @@ const AuthProvider = ({ children }) => {
     const logout = useCallback(async () =>{
         try {
             setAuthProgress(true)
-            const resp = await AuthService.logout();
+            //const resp = await AuthService.logout();
             localStorage.removeItem("token");
             setToken();
       

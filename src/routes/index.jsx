@@ -9,6 +9,7 @@ import { Link as LinkUI } from "@mui/material";
 import { useEffect } from "react";
 import Admin from "../pages/Admin";
 import AddUser from "../pages/AddUser";
+import Delete from "../pages/Delete";
 export const publicLinks = [
   <LinkUI component={Link} underline="none" color="inherit" to={"/service"}>Сервис</LinkUI>,
   <LinkUI component={Link} underline="none" color="inherit" to={"/about-us"}>О нас</LinkUI>,
@@ -51,7 +52,7 @@ const Routes = () => {
         element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
         children: [
           {
-            path: "/dashboard",
+            path: "dashboard",
             element: <Dashboard/>,
             children: [
               {
@@ -69,15 +70,15 @@ const Routes = () => {
             ]
           },
           {
-            path: "/profile",
+            path: "profile",
             element: <div>User Profile</div>,
           },
           {
-            path: "/logout",
+            path: "logout",
             element: <div>Logout</div>,
           },
           {
-            path: "/admin",
+            path: "dashboardAdmin",
             element: <Admin/>,
             children: [
               {
@@ -87,6 +88,10 @@ const Routes = () => {
                   {
                     path: "add",
                     element: <AddUser/>,
+                  },
+                  {
+                    path: "delete",
+                    element: <Delete/>,
                   },
                 ]
               },

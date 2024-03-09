@@ -1,6 +1,8 @@
 import { instance } from "../auth_config";
 import { createContext, useContext, useMemo } from "react";
 const GETUSER_ENDPOINT = '/admin/employees'
+const DELETEUSER_ENDPOINT = '/admin/employees/delete'
+const СHANGEUSER_ENDPOINT = '/admin/employees/change'
 
 const AdminService = {
 
@@ -9,14 +11,14 @@ const AdminService = {
     },
     
     update(body) {
-        return instance.patch(GETUSER_ENDPOINT,body);
+        return instance.post(СHANGEUSER_ENDPOINT,body);
     },
     
     add(body) {
         return instance.post(GETUSER_ENDPOINT,body)
     },
     delete(body) {
-        return instance.delete(GETUSER_ENDPOINT,body)
+        return instance.post(DELETEUSER_ENDPOINT,body)
     },
 }
 const AdminContext = createContext();
@@ -43,7 +45,7 @@ const AdminProvider = ({ children }) => {
             first_name:first_name,
             last_name:last_name,
             middle_name:middle_name,
-            login:login,
+            email:login,
             password:password,
             passport:passport,
             inn:inn,
@@ -56,13 +58,14 @@ const AdminProvider = ({ children }) => {
         return results.data.data;
 
     }
-    const deleteUser = async (id)=>{
+    const deleteUser = async ({id})=>{
+        console.log(id);
         const json = await JSON.stringify({
-            id:id
+            employee_id:id
           });
+        console.log(json);
         const results = await AdminService.delete(json);
-        console.log(results);
-        return results.data.data
+        return results.data.status
     }
     const update = async ({
         id,
@@ -77,7 +80,22 @@ const AdminProvider = ({ children }) => {
         birthday,
         role
     }) =>{
-        console.error("NOT IMPLEMENTED");
+        const json = await JSON.stringify({
+            employee_id:id,
+            first_name:first_name,
+            last_name:last_name,
+            middle_name:middle_name,
+            email:login,
+            password:password,
+            passport:passport,
+            inn:inn,
+            snils:snils,
+            birthday:birthday,
+            role:role,
+        });
+        console.log(json);
+        const results = await AdminService.update(json);
+        return results.data.status;
     }
     const contextValue = useMemo(
         () => ({

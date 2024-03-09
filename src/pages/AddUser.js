@@ -6,6 +6,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Box from "@mui/material/Box";
 import { useOutletContext } from "react-router";
+import { useAdmin } from "../providers/AdminProvider";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function AddUser(){
     const {
@@ -20,6 +22,7 @@ export default function AddUser(){
     const [err,setErr]=useState(false);
     const [inProgress,setInProgress]=useState(false);
     const [open, setOpen] = useState(false);
+    const {add,update} = useAdmin();
     const handleOpen = () => {
         setOpen(true);
     };
@@ -46,23 +49,41 @@ export default function AddUser(){
         </>
       );
     
-    const [info,submitFunc] = useOutletContext();
+    const [info, handleCloseSelf] = useOutletContext();
+    console.log(info);
+    const handleFunc = info ? (data) => update(data) : (data) => add(data);
+    const queryClient = useQueryClient();
+    const userAddMutation = useMutation({
+      mutationFn: data=>handleFunc(data),
+      onSuccess: (data)=>{
+        queryClient.invalidateQueries(["users"]);
+        console.log(data);
+        handleOpen();
+        handleCloseSelf();
+      },
+      onSettled: (data)=>{
+        setInProgress(false);
+        },
+      onError:(error)=>{setErr(true);
+        console.log(error)},
+    }
+    );
+    
+
     const onSubmit = async (data)=>{
         setInProgress(true);
-        const res = await handleSubmit(data);
-        setInProgress(false);
-        if(res.data.status==="ok"){
-            handleOpen();
-        }
-        else{
-            setErr(true);
-        }
-
+        setErr(false);
+        const body = info ? {id: info.id,...data} : data;
+        console.log(body);
+        userAddMutation.mutate(body);
     }
+    const mainString = !info ? "Добавления пользователя" : `Изменение пользователя 
+    ${info.last_name} ${info.first_name.substring(0,1)+"."} 
+    ${info?.middle_name.substring(0,1) ? ".":""}`
     return(
         <>
-        <Typography variant="h4" textAlign={"center"}> Добавление пользователя </Typography>
-        {err && <Alert severity="error">Ошибка добавления пользователя</Alert>}
+        <Typography variant="h4" textAlign={"center"}> {mainString} </Typography>
+        {err && <Alert severity="error">Ошибка {mainString}</Alert>}
         <Box
         style={{
           display: "grid",
@@ -100,7 +121,7 @@ export default function AddUser(){
           control={control} 
           label="Логин"
           rules={{required: true}}
-          def={info?.login} />
+          def={info?.email} />
         {errors.login && <Alert severity="error">Поле обязательно!</Alert>}
         </Stack>
         <Stack alignItems={"center"}>
@@ -163,7 +184,7 @@ export default function AddUser(){
         {errors.role && <Alert severity="error">Поле обязательно!</Alert>}
         </Stack>
       </Box>
-      <Button sx={{width:"100%"}} onClick={handleSubmit(submitFunc)} variant={"contained"}>
+      <Button sx={{width:"100%"}} onClick={handleSubmit(onSubmit)} variant={"contained"}>
           Добавление
       </Button>
       {inProgress && <LinearProgress color="secondary"/>}
