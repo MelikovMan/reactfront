@@ -22,10 +22,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import AddIcon from '@mui/icons-material/Add';
-import { Modal } from '@mui/material';
+import { Alert, Modal } from '@mui/material';
 import { useNavigate } from 'react-router';
 import { Outlet } from 'react-router';
 import { useAuth } from '../providers/AuthProvider';
+import { useAdmin } from '../providers/AdminProvider';
+import { useQuery } from '@tanstack/react-query';
+import Skeleton from '@mui/material/Skeleton';
 
 function createData(id, name, calories, fat, carbs, protein) {
   return {
@@ -38,21 +41,7 @@ function createData(id, name, calories, fat, carbs, protein) {
   };
 }
 
-const rows = [
-  createData(1, 'Cupcake', 305, 3.7, 67, 4.3),
-  createData(2, 'Donut', 452, 25.0, 51, 4.9),
-  createData(3, 'Eclair', 262, 16.0, 24, 6.0),
-  createData(4, 'Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData(5, 'Gingerbread', 356, 16.0, 49, 3.9),
-  createData(6, 'Honeycomb', 408, 3.2, 87, 6.5),
-  createData(7, 'Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData(8, 'Jelly Bean', 375, 0.0, 94, 0.0),
-  createData(9, 'KitKat', 518, 26.0, 65, 7.0),
-  createData(10, 'Lollipop', 392, 0.2, 98, 0.0),
-  createData(11, 'Marshmallow', 318, 0, 81, 2.0),
-  createData(12, 'Nougat', 360, 19.0, 9, 37.0),
-  createData(13, 'Oreo', 437, 18.0, 63, 4.0),
-];
+
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -88,34 +77,34 @@ function stableSort(array, comparator) {
 
 const headCells = [
   {
-    id: 'name',
-    numeric: false,
+    id: 'id',
+    numeric: true,
     disablePadding: true,
-    label: 'Dessert (100g serving)',
+    label: 'ID',
   },
   {
-    id: 'calories',
-    numeric: true,
+    id: 'first_name',
+    numeric: false,
     disablePadding: false,
-    label: 'Calories',
+    label: 'Имя',
   },
   {
-    id: 'fat',
-    numeric: true,
+    id: 'last_name',
+    numeric: false,
     disablePadding: false,
-    label: 'Fat (g)',
+    label: 'Фамилия',
   },
   {
-    id: 'carbs',
-    numeric: true,
+    id: 'snils',
+    numeric: false,
     disablePadding: false,
-    label: 'Carbs (g)',
+    label: 'СНИЛС',
   },
   {
-    id: 'protein',
-    numeric: true,
+    id: 'passport',
+    numeric: false,
     disablePadding: false,
-    label: 'Protein (g)',
+    label: 'Паспорт',
   },
 ];
 
@@ -178,7 +167,7 @@ EnhancedTableHead.propTypes = {
 function EnhancedTableToolbar(props) {
   const { numSelected } = props;
   const [open, setOpen] = React.useState(false);
-  const {register} = useAuth();
+  const {add} = useAdmin();
   const navigate = useNavigate();
   const handleOpen = () => {
     navigate("add");
@@ -260,7 +249,7 @@ function EnhancedTableToolbar(props) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Outlet context={[{},async (body)=> await register(body)]}/>
+          <Outlet context={[{},async (body)=> await add(body)]}/>
         </Box>
       </Modal>
     </Toolbar>
@@ -279,6 +268,15 @@ export default function EnhancedTable() {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const {get} = useAdmin();
+  const userQuery = useQuery({
+    queryKey: ["users"],
+    queryFn: ()=>get(),
+  })
+
+
+  const rows = userQuery.data.users ?? [];
+  console.log(rows);
 
 
   const handleRequestSort = (event, property) => {
@@ -342,7 +340,23 @@ export default function EnhancedTable() {
       ),
     [order, orderBy, page, rowsPerPage],
   );
-
+  if (userQuery.isLoading) return (
+  <Box sx={{ width: '100%' }}>
+    <Paper sx={{ width: '100%', mb: 2 }}>
+      <Skeleton variant="rectangular" width="100%" height="25vh" />
+      <Skeleton variant="rectangular" width="100%" height="25vh" />
+    </Paper>
+  </Box>
+  )
+  if (userQuery.isError) return (
+    <Box sx={{ width: '100%' }}>
+      <Paper sx={{ width: '100%', mb: 2 }}>
+        <Alert severity='error'>
+          Ошибка {userQuery.error.message}
+        </Alert>
+      </Paper>
+    </Box>
+    )
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -392,12 +406,12 @@ export default function EnhancedTable() {
                       scope="row"
                       padding="none"
                     >
-                      {row.name}
+                      {row.id}
                     </TableCell>
-                    <TableCell align="right">{row.calories}</TableCell>
-                    <TableCell align="right">{row.fat}</TableCell>
-                    <TableCell align="right">{row.carbs}</TableCell>
-                    <TableCell align="right">{row.protein}</TableCell>
+                    <TableCell align="right">{row.first_name}</TableCell>
+                    <TableCell align="right">{row.last_name}</TableCell>
+                    <TableCell align="right">{row.snils}</TableCell>
+                    <TableCell align="right">{row.passport}</TableCell>
                   </TableRow>
                 );
               })}

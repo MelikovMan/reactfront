@@ -2,7 +2,8 @@ import logo from './logo.svg';
 import './App.css';
 import AuthProvider from "./providers/AuthProvider";
 import Routes from "./routes/index.jsx"
-
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+const queryClient = new QueryClient();
 function App() {
   return (
     /*<div className="App">
@@ -21,9 +22,11 @@ function App() {
         </a>
       </header>
     </div>*/
-  <AuthProvider>
-    <Routes />
-  </AuthProvider>
+  <QueryClientProvider client={queryClient}>
+    <AuthProvider>
+      <Routes />
+    </AuthProvider>
+  </QueryClientProvider>
   );
 }
 
